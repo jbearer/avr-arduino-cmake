@@ -29,6 +29,7 @@ find_program(AVRSTRIP avr-strip)
 find_program(OBJCOPY avr-objcopy)
 find_program(OBJDUMP avr-objdump)
 find_program(AVRSIZE avr-size)
+find_program(AVRAS avr-as)
 find_program(AVRDUDE avrdude)
 find_program(SCREEN screen)
 
@@ -81,6 +82,7 @@ function(add_executable_avr NAME)
     else ()
         add_executable(${NAME} ${ARGN})
         set_target_properties(${NAME} PROPERTIES OUTPUT_NAME "${NAME}.elf")
+        set_target_properties(${NAME} PROPERTIES COMPILE_FLAGS "-fverbose-asm -save-temps")
         set_directory_properties(PROPERTIES ADDITIONAL_MAKE_CLEAN_FILES "${NAME}.hex;${NAME}.eep;${NAME}.lst")
 
         # generate the .hex file
@@ -112,6 +114,14 @@ function(add_executable_avr NAME)
         add_custom_target(
                 ${NAME}-monitor
                 COMMAND ${MONITOR} ${MONITOR_ARGS})
+
+        # generate an assembly language listing
+        add_custom_target(
+                ${NAME}-list
+                ALL
+                COMMAND ${AVRAS} -alhnd -m${MCU} ${NAME}.s > ${NAME}.lst
+                DEPENDS ${NAME})
+
     endif ()
 endfunction(add_executable_avr)
 
