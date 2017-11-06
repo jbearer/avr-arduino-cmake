@@ -85,6 +85,10 @@ function(add_executable_avr NAME)
         set_target_properties(${NAME} PROPERTIES COMPILE_FLAGS "-fverbose-asm -save-temps")
         set_directory_properties(PROPERTIES ADDITIONAL_MAKE_CLEAN_FILES "${NAME}.hex;${NAME}.eep;${NAME}.lst")
 
+        add_custom_target(
+                OUTPUT ${NAME}-unstripped.elf
+                COMMAND ${CMAKE_COMMAND} -E copy "${NAME}.elf" "${NAME}-unstripped.elf")
+
         # generate the .hex file
         add_custom_command(
                 OUTPUT ${NAME}.hex
