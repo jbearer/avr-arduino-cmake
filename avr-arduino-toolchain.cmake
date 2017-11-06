@@ -87,6 +87,7 @@ function(add_executable_avr NAME)
 
         add_custom_target(
                 OUTPUT ${NAME}-unstripped.elf
+                ALL
                 COMMAND ${CMAKE_COMMAND} -E copy "${NAME}.elf" "${NAME}-unstripped.elf")
 
         # generate the .hex file
