@@ -64,7 +64,17 @@ if (NOT DEFINED MONITOR_ARGS)
     set(MONITOR_ARGS ${SERIAL_DEV} ${BAUD})
 endif ()
 
-set(COMPILER_FLAGS "-Os -Wall -Wno-unknown-pragmas -Wextra -MMD -mmcu=${MCU}" CACHE STRING "")
+set(COMPILER_FLAGS "-Wall -Wno-unknown-pragmas -Wextra -MMD -mmcu=${MCU}" CACHE STRING "")
+
+if (NOT ${CMAKE_BUILD_TYPE})
+    set(CMAKE_BUILD_TYPE Debug)
+endif()
+if ("${CMAKE_BUILD_TYPE}" EQUAL "Debug")
+    set(COMPILER_FLAGS "${COMPILER_FLAGS} -g")
+elseif ("${CMAKE_BUILD_TYPE}" EQUAL "Release")
+    set(COMPILER_FLAGS "${COMPILER_FLAGS} -Os")
+endif()
+
 set(CMAKE_C_FLAGS "${COMPILER_FLAGS} -std=gnu99 -mcall-prologues -ffunction-sections -fdata-sections" CACHE STRING "")
 set(CMAKE_CXX_FLAGS "${COMPILER_FLAGS} -std=c++0x -felide-constructors -fpermissive -fno-exceptions -ffunction-sections -fdata-sections -fno-threadsafe-statics" CACHE STRING "")
 set(CMAKE_ASM_FLAGS "-x assembler-with-cpp ${COMPILER_FLAGS} " CACHE STRING "")
